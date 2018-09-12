@@ -1,4 +1,4 @@
-# ssb-replication-manager
+# [WIP] ssb-replication-manager
 
 > Configure and prioritise ebt replication for ssb
 
@@ -37,12 +37,22 @@ Takes an `opts` object of shape:
 ```
 {
   maxNumConnections: <num>,
-  prioritisedPeers: [<feedId1>, <feedId2>]
+  modeChangeThreshold: <num>
 }
 ```
 
-Where `prioritisedPeers` is an optional array of feedIds ordered by priority. First in the list is first to be replicated.
-  - One way to generate this array might be to sort by number of hops in the friends graph so that you can replicate those closest to you first.
+
+## Exposes the same methods as [ssb-ebt](https://github.com/ssbc/ssb-ebt)
+
+```js
+  replicationManger.replicate(opts)
+```
+```js
+  replicationManger.request(feedId, isReplicationEnabled)
+```
+```js
+  replicationManger.peerStatus(id, cb)
+```
 
 ## Install
 
