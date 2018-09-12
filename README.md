@@ -4,14 +4,16 @@
 
 [ssb-ebt]() only exposes an api to stop or start replication of a feed. This module wraps it so you can control the maximum number of connections and prioritise who gets replicated first.
 
-Now: 
+## Now: 
   - Track how far behind all your feeds are. If they are a long way behind then you have to do a lot of downloading so trigger special mode.
   - Set a threshold to trigger special mode that limits the number of feeds being replicated at once. 
   - Set the max number of feeds to download at once when in special mode.
 
-Later: Prioritising
+## Later: 
 
-Things you might want to know about replication:
+- Prioritising order of who to replicate first.
+
+- Things you might want to know about replication:
 
 - You might also want to show the status of certain feeds if you're uploading or downloading them.
 
