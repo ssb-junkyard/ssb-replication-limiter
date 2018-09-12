@@ -5,13 +5,13 @@
 [ssb-ebt]() only exposes an api to stop or start replication of a feed. This module wraps it so you can control the maximum number of connections and prioritise who gets replicated first.
 
 ## Now: 
-  - Track how far behind all your feeds are. If they are a long way behind then you have to do a lot of downloading so trigger special mode.
+
+  - Track how far behind all feeds are. If they are a long way behind then you have to do a lot of downloading so trigger special mode.
   - Set a threshold to trigger special mode that limits the number of feeds being replicated at once. 
   - Set the max number of feeds to download at once when in special mode.
+  - Prioritising order of who to replicate first.
 
 ## Later: 
-
-- Prioritising order of who to replicate first.
 
 - Things you might want to know about replication:
 
@@ -40,8 +40,23 @@ Takes an `opts` object of shape:
 {
   maxNumConnections: <num>,
   modeChangeThreshold: <num>
+  prioritiseFeeds: <function>
 }
 ```
+
+where `prioritiseFeeds` is function that takes an array of feedIds and returns a sorted array of feedIds, highest priority first.
+
+eg:
+
+```js
+  function prioritise(feedIds){
+    return feedIds.sort(function(a ,b){
+      ... 
+    })
+  }
+```
+
+You could use ssb-friends and prioritise by number of hops.
 
 
 ## Exposes the same methods as [ssb-ebt](https://github.com/ssbc/ssb-ebt)
