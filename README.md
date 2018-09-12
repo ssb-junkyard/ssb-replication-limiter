@@ -44,7 +44,7 @@ Takes an `opts` object of shape:
 }
 ```
 
-where `prioritiseFeeds` is function that takes an array of feedIds and returns a sorted array of feedIds, highest priority first.
+where `prioritiseFeeds` is a function that takes an array of feedIds and returns a sorted array of feedIds, highest priority first.
 
 eg:
 
@@ -94,12 +94,17 @@ ISC
 
 ## TODOs
 
-// selectPeersFarBehind (uses max downloads)
-// selectPeersToDisconnect (will be connected and under the threshold)
+selectPeersFarBehind (uses max downloads)
 
-// Query peerStatus for all the peers we know about.
-// then map from ebt peerStatus structure to {[feedId]: behindBy}
-// set a really slow scheduler interval for this. 5-10s because otherwise at initial sync we're going to be jumping around a lot between all the feeds.
-// Or make a selector that such that, if there is a peer downloading && over the threshold, just don't change anything.
-// trigger the side effect which is the call to ebt.request(..., true)
+selectPeersToDisconnect (will be connected and under the threshold)
+
+Query peerStatus for all the peers we know about.
+
+then map from ebt peerStatus structure to {[feedId]: behindBy}
+
+set a really slow scheduler interval for this. 5-10s because otherwise at initial sync we're going to be jumping around a lot between all the feeds.
+
+Or make a selector that such that, if there is a peer downloading && over the threshold, just don't change anything.
+
+trigger the side effect which is the call to ebt.request(..., true)
 
