@@ -2,7 +2,7 @@
 
 > Configure and prioritise ebt replication for ssb
 
-[ssb-ebt](https://github.com/ssbc/ssb-ebt) only exposes an api to stop or start replication of a feed. This module wraps it so you can control the maximum number of connections and prioritise who gets replicated first.
+[ssb-ebt](https://github.com/ssbc/ssb-ebt) only exposes an api to stop or start replication of a feed. This module wraps it so you can control the maximum number of simultaneous downloads and prioritise who gets replicated first.
 
 ## Now: 
 
