@@ -2,7 +2,7 @@
 
 > Configure and prioritise ebt replication for ssb
 
-[ssb-ebt]() only exposes an api to stop or start replication of a feed. This module wraps it so you can control the maximum number of connections and prioritise who gets replicated first.
+[ssb-ebt](https://github.com/ssbc/ssb-ebt) only exposes an api to stop or start replication of a feed. This module wraps it so you can control the maximum number of connections and prioritise who gets replicated first.
 
 ## Now: 
 
@@ -32,7 +32,7 @@
 
 ```js
 var ReplicationManager = require('ssb-replication-manager')
-var replicationManger = ReplicationManager(opts)
+var replicationManager = ReplicationManager(opts)
 ```
 Takes an `opts` object of shape: 
 
@@ -61,15 +61,17 @@ You could use ssb-friends and prioritise by number of hops.
 
 ## Exposes the same methods as [ssb-ebt](https://github.com/ssbc/ssb-ebt)
 
-```js
-  replicationManger.replicate(opts)
-```
-```js
-  replicationManger.request(feedId, isReplicationEnabled)
-```
-```js
-  replicationManger.peerStatus(id, cb)
-```
+###  replicationManager.replicate(opts)
+
+###  replicationManager.request(feedId, isReplicationEnabled)
+
+###  replicationManager.peerStatus(id, cb)
+
+And some extra ones:
+
+### replicationManager.setModeChangeThreshold(threshold)
+
+### replicationManager.setMaxNumConnections(max)
 
 ## Install
 
