@@ -1,30 +1,37 @@
 'use strict'
-var {Record, Map, List} = require('immutable')
+var {Record, Map} = require('immutable')
 var {createSelector} = require('redux-bundler')
-var { parseAddress, feedIdRegex: FeedIdRegex } = require('ssb-ref')
 
 var PeerRecord = Record({
-  id: '', // A multiserver address
   isReplicating: false,
-  // hypothesis: max downloads is derived from the number of peers that have a a positive behind value.
   behindBy: 0 // positive means we are behind and can download. Negative means we are ahead and could allow them to request it if they want.
 })
 
 var initialState = Map({})
 
+const PEER_ADDED = 'PEER_ADDED'
+const PEER_REMOVED = 'PEER_REMOVED'
+const PEER_BEHIND_BY_SET = 'PEER_BEHIND_BY_SET'
+const PEERS_STARTED_REPLICATING = 'PEERS_STARTED_REPLICATING'
+const PEERS_STOPPED_REPLICATING = 'PEERS_STOPPED_REPLICATING'
+
 module.exports = {
   name: 'peers',
-  reducer: function (state = initialState, action) {
+  getReducer: function () {
+    if (this.initialState) {
+      initialState = this.initialState
+    }
+    return this._reducer
+  },
+  _reducer: function (state = initialState, action) {
     switch (action.type) {
       case PEER_ADDED: {
-        const { feedId, isLocal, isLongterm } = action.payload
-        const key = getKeyFromAddress(feedId)
+        const { feedId } = action.payload
 
         return state.update(feedId, function (peer) {
           if (!peer) {
-            peer = PeerRecord({id: feedId, peer: key, isLocal, isLongterm: Boolean(isLongterm)})
+            peer = PeerRecord({})
           }
-
           return peer
         })
       }
@@ -38,12 +45,37 @@ module.exports = {
 
         return state.setIn([feedId, 'behindBy'], behindBy)
       }
+      case PEERS_STARTED_REPLICATING: {
+        const { feedIds } = action.payload
+
+        const updatedPeers = feedIds
+          .reduce(function (currentState, feedId) {
+            return currentState
+              .setIn([feedId, 'isReplicating'], true)
+          }, state)
+
+        return state.mergeDeep(updatedPeers)
+      }
+      case PEERS_STOPPED_REPLICATING: {
+        const { feedIds } = action.payload
+
+        const updatedPeers = feedIds
+          .reduce(function (currentState, feedId) {
+            return currentState
+              .setIn([feedId, 'isReplicating'], false)
+          }, state)
+
+        return state.mergeDeep(updatedPeers)
+      }
       default:
         return state
     }
   },
   doAddPeer,
   doRemovePeer,
+  doStartPeersReplicating,
+  doStopPeersReplicating,
+  doPeerBehindBySet,
 
   selectPeers,
   selectReplicatingPeers: createSelector('selectPeers', function (peers) {
@@ -59,7 +91,7 @@ module.exports = {
       return peer.get('behindBy') > threshold
     })
   }),
-  selectPeersToStartReplicating: createSelector('selectPeersOverThreshold', 'selectMax', 'selectNumberOfReplicatingPeers', function (peers, max, numberOfReplicatingPeers) {
+  selectPeersToStartReplicating: createSelector('selectPeersOverThreshold', 'selectMaxConnectedPeers', 'selectNumberOfReplicatingPeers', function (peers, max, numberOfReplicatingPeers) {
     return peers
       .filter(function (peer) {
         return !peer.get('isReplicating')
@@ -72,12 +104,12 @@ module.exports = {
     })
   }),
   reactPeersToStartReplicating: createSelector('selectPeersToStartReplicating', function (peers) {
-    // need to use the dispatch multi pattern here I think.
-
+    if (peers.size === 0) return
+    return doStartPeersReplicating({feedIds: peers.keySeq()})
   }),
   reactPeersToStopReplicating: createSelector('selectPeersToStopReplicating', function (peers) {
-    // need to use the dispatch multi pattern here I think.
-
+    if (peers.size === 0) return
+    return doStopPeersReplicating({feedIds: peers.keySeq()})
   }),
 
   PeerRecord
@@ -87,11 +119,39 @@ function selectPeers (state) {
   return state.peers
 }
 
-const PEER_ADDED = 'PEER_ADDED'
-const PEER_REMOVED = 'PEER_REMOVED'
-const PEER_BEHIND_BY_SET = 'PEER_BEHIND_BY_SET'
-const PEER_STARTED_REPLICATING = 'PEER_STARTED_REPLICATING'
-const PEER_STOPPED_REPLICATING = 'PEER_STOPPED_REPLICATING'
+function doPeerBehindBySet ({feedId, behindBy}) {
+  return {
+    type: PEER_BEHIND_BY_SET,
+    payload: {
+      feedId,
+      behindBy
+    }
+  }
+}
+
+function doStartPeersReplicating ({feedIds}) {
+  return function ({dispatch, request}) {
+    dispatch({
+      type: PEERS_STARTED_REPLICATING,
+      payload: {feedIds}
+    })
+    feedIds.forEach(function (feedId) {
+      request(feedId, true)
+    })
+  }
+}
+
+function doStopPeersReplicating ({feedIds}) {
+  return function ({dispatch, request}) {
+    dispatch({
+      type: PEERS_STOPPED_REPLICATING,
+      payload: {feedIds}
+    })
+    feedIds.forEach(function (feedId) {
+      request(feedId, false)
+    })
+  }
+}
 
 function doAddPeer ({feedId}) {
   return {
@@ -109,11 +169,4 @@ function doRemovePeer ({feedId}) {
       feedId
     }
   }
-}
-
-var feedIdRegex = new RegExp(FeedIdRegex)
-
-function getKeyFromAddress (address) {
-  var {key} = parseAddress(address)
-  return key.match(feedIdRegex)[1]
 }

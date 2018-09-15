@@ -38,8 +38,11 @@ Takes an `opts` object of shape:
 
 ```
 {
+  peerStatus: <function> (required)
+  request: <function> (required)
+
   maxNumConnections: <num>,
-  modeChangeThreshold: <num>
+  modeChangeThreshold: <num>,
   prioritiseFeeds: <function>
 }
 ```
@@ -96,17 +99,17 @@ ISC
 
 ## TODOs
 
-selectPeersFarBehind (uses max downloads)
+- [x] selectPeersFarBehind (uses max downloads)
 
-selectPeersToDisconnect (will be connected and under the threshold)
+- [x] selectPeersToDisconnect (will be connected and under the threshold)
 
-Query peerStatus for all the peers we know about.
+- [ ] Query peerStatus for all the peers we know about.
 
-then map from ebt peerStatus structure to {[feedId]: behindBy}
+- [ ] then map from ebt peerStatus structure to {[feedId]: behindBy}
 
-set a really slow scheduler interval for this. 5-10s because otherwise at initial sync we're going to be jumping around a lot between all the feeds.
+- [ ] set a really slow scheduler interval for this. 5-10s because otherwise at initial sync we're going to be jumping around a lot between all the feeds.
 
-Or make a selector that such that, if there is a peer downloading && over the threshold, just don't change anything.
+- [x] Or make a selector that such that, if there is a peer downloading && over the threshold, just don't change anything.
 
-trigger the side effect which is the call to ebt.request(..., true)
+- [x] trigger the side effect which is the call to ebt.request(..., true)
 

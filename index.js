@@ -1,35 +1,30 @@
-var Ebt = require('ssb-ebt')
+var Store = require('./store')
 
-module.exports = {
-  init,
-  name: Ebt.name,
-  version: Ebt.version,
-  manifest: Ebt.manifest,
-  persmission: Ebt.permissions
-}
+module.exports = function (opts) {
+  opts = opts || {}
+  var maxNumConnections = opts.maxNumConnections || 1
+  var modeChangeThreshold = opts.modeChangeThreshold || 50
+  // var prioritiseFeeds = opts.prioritiseFeeds // TODO: ???
 
-function init (sbot, config) {
-  var ebt = Ebt.init(sbot, config)
-  var maxDownloads = 1 // In special mode
-  var modeChangeValue = config.modeChangeValue || 50 // Value over which we transition to special prioritising mode where max downloads is enforced. Below that we can just enable all peers in standard ebt mode.
+  var store = Store({
+    request: opts.request,
+    getPeerBehindBy: opts.getPeerBehindBy
+  })
+  // where getPeerBehindBy takes a feed Id and returns the maximum amount our copy of their feed is behind by.
+
+  store.doSetModeChangeThreshold(modeChangeThreshold)
+  store.doSetMaxNumConnections(maxNumConnections)
+  store.doStartScheduler(2000)
 
   return {
-    request,
-    replicate: ebt.replicate,
-    peerStatus: ebt.peerStatus,
-    setMaxNumDownloads,
-    setPeersToPrioritise
-  }
-
-  function request (feedId, shouldReplicate) {
-
-  }
-
-  function setMaxNumDownloads (num) {
-    maxDownloads = num
-  }
-
-  function setPeersToPrioritise (peers) {
-
+    request: function (feedId, isReplicationEnabled) {
+      if (isReplicationEnabled) { store.doAddPeer(feedId) } else { store.doRemovePeer(feedId) }
+    },
+    setModeChangeThreshold: function (threshold) {
+      store.doSetModeChangeThreshold(threshold)
+    },
+    setMaxNumConnections: function (max) {
+      store.doSetMaxNumConnections(max)
+    }
   }
 }
