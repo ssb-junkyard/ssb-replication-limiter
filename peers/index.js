@@ -103,12 +103,12 @@ module.exports = {
       return peer.get('behindBy') < threshold
     })
   }),
-  reactPeersToStartReplicating: createSelector('selectPeersToStartReplicating', function (peers) {
-    if (peers.size === 0) return
+  reactPeersToStartReplicating: createSelector('selectPeersToStartReplicating', 'selectIsLimitedMode', function (peers, isLimitedModeEnabled) {
+    if (peers.size === 0 || !isLimitedModeEnabled) return // TODO: there's probably a nice place to check isLimitedMode.
     return doStartPeersReplicating({feedIds: peers.keySeq()})
   }),
-  reactPeersToStopReplicating: createSelector('selectPeersToStopReplicating', function (peers) {
-    if (peers.size === 0) return
+  reactPeersToStopReplicating: createSelector('selectPeersToStopReplicating', 'selectIsLimitedMode', function (peers, isLimitedModeEnabled) {
+    if (peers.size === 0 || !isLimitedModeEnabled) return
     return doStopPeersReplicating({feedIds: peers.keySeq()})
   }),
 
