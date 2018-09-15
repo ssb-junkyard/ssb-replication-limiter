@@ -99,15 +99,19 @@ ISC
 
 ## TODOs
 
+- [ ] when there are no peers left above the threshold, they can all be replicating
+
+- [ ] as soons as one peer goes over the threshold, all replicating peers should be disabled
+
 - [x] selectPeersFarBehind (uses max downloads)
 
 - [x] selectPeersToDisconnect (will be connected and under the threshold)
 
-- [ ] Query peerStatus for all the peers we know about.
+- [x] Query peerStatus for all the peers we know about.
 
-- [ ] then map from ebt peerStatus structure to {[feedId]: behindBy}
+- [x] then map from ebt peerStatus structure to {[feedId]: behindBy}
 
-- [ ] set a really slow scheduler interval for this. 5-10s because otherwise at initial sync we're going to be jumping around a lot between all the feeds.
+- [x] set a really slow scheduler interval for this. 5-10s because otherwise at initial sync we're going to be jumping around a lot between all the feeds.
 
 - [x] Or make a selector that such that, if there is a peer downloading && over the threshold, just don't change anything.
 
