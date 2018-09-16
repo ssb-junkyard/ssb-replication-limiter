@@ -4,14 +4,14 @@ var {createSelector} = require('redux-bundler')
 
 var PeerRecord = Record({
   isReplicating: false,
-  behindBy: 0 // positive means we are behind and can download. Negative means we are ahead and could allow them to request it if they want.
+  aheadBy: 0 // positive means we are behind and can download. Negative means we are ahead and could allow them to request it if they want.
 })
 
 var initialState = Map({})
 
 const PEER_ADDED = 'PEER_ADDED'
 const PEER_REMOVED = 'PEER_REMOVED'
-const PEER_BEHIND_BY_SET = 'PEER_BEHIND_BY_SET'
+const PEER_AHEAD_BY = 'PEER_AHEAD_BY'
 const PEERS_STARTED_REPLICATING = 'PEERS_STARTED_REPLICATING'
 const PEERS_STOPPED_REPLICATING = 'PEERS_STOPPED_REPLICATING'
 
@@ -40,10 +40,10 @@ module.exports = {
 
         return state.delete(feedId)
       }
-      case PEER_BEHIND_BY_SET: {
-        const { feedId, behindBy } = action.payload
+      case PEER_AHEAD_BY: {
+        const { feedId, aheadBy } = action.payload
 
-        return state.setIn([feedId, 'behindBy'], behindBy)
+        return state.setIn([feedId, 'aheadBy'], aheadBy)
       }
       case PEERS_STARTED_REPLICATING: {
         const { feedIds } = action.payload
@@ -75,7 +75,7 @@ module.exports = {
   doRemovePeer,
   doStartPeersReplicating,
   doStopPeersReplicating,
-  doPeerBehindBySet,
+  doPeerAheadBy,
 
   selectPeers,
   selectReplicatingPeers: createSelector('selectPeers', function (peers) {
@@ -83,12 +83,17 @@ module.exports = {
       return peer.get('isReplicating')
     })
   }),
+  selectNotReplicatingPeers: createSelector('selectPeers', function (peers) {
+    return peers.filter(function (peer) {
+      return !peer.get('isReplicating')
+    })
+  }),
   selectNumberOfReplicatingPeers: createSelector('selectReplicatingPeers', function (peers) {
     return peers.size
   }),
   selectPeersOverThreshold: createSelector('selectPeers', 'selectThreshold', function (peers, threshold) {
     return peers.filter(function (peer) {
-      return peer.get('behindBy') > threshold
+      return peer.get('aheadBy') > threshold
     })
   }),
   selectPeersToStartReplicating: createSelector('selectPeersOverThreshold', 'selectMaxConnectedPeers', 'selectNumberOfReplicatingPeers', function (peers, max, numberOfReplicatingPeers) {
@@ -100,15 +105,21 @@ module.exports = {
   }),
   selectPeersToStopReplicating: createSelector('selectReplicatingPeers', 'selectThreshold', function (peers, threshold) {
     return peers.filter(function (peer) {
-      return peer.get('behindBy') < threshold
+      return peer.get('aheadBy') < threshold
     })
+  }),
+  reactPeersToStartReplicatingUnlimitedMode: createSelector('selectNotReplicatingPeers', 'selectIsUnLimitedMode', function (peers, isUnLimitedModeEnabled) {
+    if (peers.size === 0 || !isUnLimitedModeEnabled) return // TODO: there's probably a nice place to check isLimitedMode.
+    return doStartPeersReplicating({feedIds: peers.keySeq()})
   }),
   reactPeersToStartReplicating: createSelector('selectPeersToStartReplicating', 'selectIsLimitedMode', function (peers, isLimitedModeEnabled) {
     if (peers.size === 0 || !isLimitedModeEnabled) return // TODO: there's probably a nice place to check isLimitedMode.
+    console.log('Do limited mode replication of peers:', peers)
     return doStartPeersReplicating({feedIds: peers.keySeq()})
   }),
   reactPeersToStopReplicating: createSelector('selectPeersToStopReplicating', 'selectIsLimitedMode', function (peers, isLimitedModeEnabled) {
     if (peers.size === 0 || !isLimitedModeEnabled) return
+    console.log('Do stop limited mode replication of peers:', peers)
     return doStopPeersReplicating({feedIds: peers.keySeq()})
   }),
 
@@ -119,12 +130,12 @@ function selectPeers (state) {
   return state.peers
 }
 
-function doPeerBehindBySet ({feedId, behindBy}) {
+function doPeerAheadBy ({feedId, aheadBy}) {
   return {
-    type: PEER_BEHIND_BY_SET,
+    type: PEER_AHEAD_BY,
     payload: {
       feedId,
-      behindBy
+      aheadBy
     }
   }
 }

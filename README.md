@@ -99,9 +99,12 @@ ISC
 
 ## TODOs
 
-- [ ] when there are no peers left above the threshold, they can all be replicating
+- [ ] expose a method to check if replication is doing a big sync
+  - [ ] use this in the connection manager to stop disconnecting.
 
-- [ ] as soons as one peer goes over the threshold, all replicating peers should be disabled
+- [x] when there are no peers left above the threshold, they can all be replicating
+
+- [x] as soons as one peer goes over the threshold, all replicating peers should be disabled
 
 - [x] selectPeersFarBehind (uses max downloads)
 

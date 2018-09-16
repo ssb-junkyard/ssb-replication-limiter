@@ -39,6 +39,7 @@ module.exports = {
       case MODE_CHANGE_THRESHOLD_SET:
         return state.set('modeChangeThreshold', payload)
       case LIMITED_MODE_CHANGED:
+        console.log('Replication mode changed: ', payload)
         return state.set('mode', payload)
       case SCHEDULER_DID_TICK:
         return state
@@ -118,18 +119,21 @@ function doSetLimitedMode (enableLimitedMode) {
 }
 
 function doStartScheduler (interval) {
-  return function ({dispatch, getPeerBehindBy, store, getState}) {
+  return function ({dispatch, getPeerAheadBy, store, getState}) {
     interval = interval || 1000
     var intervalID = setInterval(function () {
-      var peers = store.selectPeers(getState())
+      var peers = store.selectPeers(getState()).keySeq()
 
       peers.forEach(function (peer) {
-        var behindBy = getPeerBehindBy(peer)
-        var action = store.doPeerBehindBySet({peer, behindBy})
-        dispatch(action)
+        var aheadBy = getPeerAheadBy(peer)
+
+        dispatch({
+          actionCreator: 'doPeerAheadBy',
+          args: [{aheadBy, feedId: peer}]
+        })
       })
 
-      dispatch(doSchedulerTick(interval))
+      // dispatch(doSchedulerTick(interval))
     }, interval)
     dispatch({type: SCHEDULER_DID_START, payload: intervalID})
   }

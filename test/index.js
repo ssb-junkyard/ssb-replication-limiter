@@ -7,12 +7,12 @@ function request () {
 
 }
 
-function getPeerBehindBy () {
+function getPeerAheadBy () {
 
 }
 
 test('simple', function (t) {
-  var app = Store({request, getPeerBehindBy})
+  var app = Store({request, getPeerAheadBy})
   t.ok(app, 'app is a thing')
   t.end()
 })
@@ -23,7 +23,7 @@ test('throws if request not passed in opts', function (t) {
 })
 
 test('Set Max Peers', function (t) {
-  var app = Store({request, getPeerBehindBy})
+  var app = Store({request, getPeerAheadBy})
   var expected = 5
   app.doSetMaxNumConnections(expected)
 
@@ -33,7 +33,7 @@ test('Set Max Peers', function (t) {
 })
 
 test('Adds a peer', function (t) {
-  var app = Store({request, getPeerBehindBy})
+  var app = Store({request, getPeerAheadBy})
   var peerId = 'DTNmX+4SjsgZ7xyDh5xxmNtFqa6pWi5Qtw7cE8aR9TQ='
   app.doAddPeer({feedId: peerId})
   var peer = app.selectPeers(app.getState()).get(peerId)
@@ -43,7 +43,7 @@ test('Adds a peer', function (t) {
 })
 
 test('remove peer', function (t) {
-  var app = Store({request, getPeerBehindBy})
+  var app = Store({request, getPeerAheadBy})
   var peerId = 'DTNmX+4SjsgZ7xyDh5xxmNtFqa6pWi5Qtw7cE8aR9TQ='
   app.doAddPeer({feedId: peerId})
   var peer = app.selectPeers(app.getState()).get(peerId)
@@ -56,13 +56,13 @@ test('remove peer', function (t) {
   t.end()
 })
 
-test('scheduler makes connections when started and calls getPeerBehindBy', function (t) {
+test('scheduler makes connections when started and calls getPeerAheadBy', function (t) {
   t.plan(1)
-  function getPeerBehindBy (peerId) {
+  function getPeerAheadBy (peerId) {
     t.equal(peerId, peerId)
     app.doStopScheduler()
   }
-  var app = Store({request, getPeerBehindBy})
+  var app = Store({request, getPeerAheadBy})
   var peerId = 'DTNmX+4SjsgZ7xyDh5xxmNtFqa6pWi5Qtw7cE8aR9TQ='
   app.doAddPeer({feedId: peerId})
   app.doStartScheduler(100)
@@ -77,23 +77,23 @@ test('selectPeersToStartReplicating', function (t) {
   var threshold = 5
   var peer1 = PeerRecord({
     isReplicating: false,
-    behindBy: threshold + 1
+    aheadBy: threshold + 1
   })
 
   var peer2 = PeerRecord({
     isReplicating: false,
-    behindBy: threshold + 2
+    aheadBy: threshold + 2
   })
 
   var peer3 = PeerRecord({
     isReplicating: false,
-    behindBy: threshold + 3
+    aheadBy: threshold + 3
   })
 
   // if they're already replicating then ignore.
   var peer4 = PeerRecord({
     isReplicating: true,
-    behindBy: threshold + 1
+    aheadBy: threshold + 1
   })
 
   var state = Map({
@@ -101,7 +101,7 @@ test('selectPeersToStartReplicating', function (t) {
     [id4]: peer4
   })
 
-  var app = Store({request, getPeerBehindBy, peers: {initialState: state}})
+  var app = Store({request, getPeerAheadBy, peers: {initialState: state}})
   app.doSetModeChangeThreshold(threshold)
   app.doSetMaxNumConnections(2)
   var orderedKeys = app.selectPeersToStartReplicating(app.getState()).keySeq()
@@ -119,23 +119,23 @@ test('selectPeersToStopReplicating', function (t) {
   var threshold = 5
   var peer1 = PeerRecord({
     isReplicating: false,
-    behindBy: threshold + 1
+    aheadBy: threshold + 1
   })
 
   var peer2 = PeerRecord({
     isReplicating: false,
-    behindBy: threshold + 2
+    aheadBy: threshold + 2
   })
 
   var peer3 = PeerRecord({
     isReplicating: false,
-    behindBy: threshold + 3
+    aheadBy: threshold + 3
   })
 
   // if they're already replicating then ignore.
   var peer4 = PeerRecord({
     isReplicating: true,
-    behindBy: threshold - 1
+    aheadBy: threshold - 1
   })
 
   var state = Map({
@@ -145,7 +145,7 @@ test('selectPeersToStopReplicating', function (t) {
     [id4]: peer4
   })
 
-  var app = Store({request, getPeerBehindBy, peers: {initialState: state}})
+  var app = Store({request, getPeerAheadBy, peers: {initialState: state}})
   app.doSetModeChangeThreshold(threshold)
   app.doSetMaxNumConnections(2)
   var orderedKeys = app.selectPeersToStopReplicating(app.getState()).keySeq()

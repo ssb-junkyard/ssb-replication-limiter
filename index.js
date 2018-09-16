@@ -8,17 +8,18 @@ module.exports = function (opts) {
 
   var store = Store({
     request: opts.request,
-    getPeerBehindBy: opts.getPeerBehindBy
+    getPeerAheadBy: opts.getPeerAheadBy
   })
-  // where getPeerBehindBy takes a feed Id and returns the maximum amount our copy of their feed is behind by.
+  // where getPeerAheadBy takes a feed Id and returns the maximum amount our copy of their feed is behind by.
 
   store.doSetModeChangeThreshold(modeChangeThreshold)
   store.doSetMaxNumConnections(maxNumConnections)
   store.doStartScheduler(2000)
+  // store.doEnableDebug()
 
   return {
     request: function (feedId, isReplicationEnabled) {
-      if (isReplicationEnabled) { store.doAddPeer(feedId) } else { store.doRemovePeer(feedId) }
+      if (isReplicationEnabled) { store.doAddPeer({feedId}) } else { store.doRemovePeer({feedId}) }
     },
     setModeChangeThreshold: function (threshold) {
       store.doSetModeChangeThreshold(threshold)
