@@ -82,7 +82,7 @@ module.exports = {
 
     return doSetLimitedMode(true)
   }),
-  reactShouldLeaveLimitedMode: createSelector('selectShouldGoToLimitedMode', function (shouldLeaveLimitedMode) {
+  reactShouldLeaveLimitedMode: createSelector('selectShouldLeaveLimitedMode', function (shouldLeaveLimitedMode) {
     if (!shouldLeaveLimitedMode) return
 
     return doSetLimitedMode(false)

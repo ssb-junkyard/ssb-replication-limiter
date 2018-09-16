@@ -2,8 +2,8 @@ var Store = require('./store')
 
 module.exports = function (opts) {
   opts = opts || {}
-  var maxNumConnections = opts.maxNumConnections || 1
-  var modeChangeThreshold = opts.modeChangeThreshold || 50
+  var maxNumConnections = opts.maxNumConnections || 2
+  var modeChangeThreshold = opts.modeChangeThreshold || 20
   // var prioritiseFeeds = opts.prioritiseFeeds // TODO: ???
 
   var store = Store({

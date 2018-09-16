@@ -110,6 +110,7 @@ module.exports = {
   }),
   reactPeersToStartReplicatingUnlimitedMode: createSelector('selectNotReplicatingPeers', 'selectIsUnLimitedMode', function (peers, isUnLimitedModeEnabled) {
     if (peers.size === 0 || !isUnLimitedModeEnabled) return // TODO: there's probably a nice place to check isLimitedMode.
+    console.log('start replicating peers unlimited mode: ', peers.size)
     return doStartPeersReplicating({feedIds: peers.keySeq()})
   }),
   reactPeersToStartReplicating: createSelector('selectPeersToStartReplicating', 'selectIsLimitedMode', function (peers, isLimitedModeEnabled) {
@@ -119,7 +120,6 @@ module.exports = {
   }),
   reactPeersToStopReplicating: createSelector('selectPeersToStopReplicating', 'selectIsLimitedMode', function (peers, isLimitedModeEnabled) {
     if (peers.size === 0 || !isLimitedModeEnabled) return
-    console.log('Do stop limited mode replication of peers:', peers)
     return doStopPeersReplicating({feedIds: peers.keySeq()})
   }),
 
