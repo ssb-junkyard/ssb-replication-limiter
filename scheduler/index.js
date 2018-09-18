@@ -39,7 +39,7 @@ module.exports = {
       case MODE_CHANGE_THRESHOLD_SET:
         return state.set('modeChangeThreshold', payload)
       case LIMITED_MODE_CHANGED:
-        console.log('Replication mode changed: ', payload)
+        console.error('Replication mode changed: ', payload)
         return state.set('mode', payload)
       case SCHEDULER_DID_TICK:
         return state
