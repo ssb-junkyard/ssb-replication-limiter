@@ -123,6 +123,7 @@ function doStartScheduler (interval) {
     interval = interval || 1000
     var intervalID = setInterval(function () {
       var peers = store.selectPeers(getState()).keySeq()
+      console.log('tick, num peers: ', peers.size)
 
       peers.forEach(function (peer) {
         var aheadBy = getPeerAheadBy(peer)

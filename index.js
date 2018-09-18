@@ -4,7 +4,6 @@ module.exports = function (opts) {
   opts = opts || {}
   var maxNumConnections = opts.maxNumConnections || 2
   var modeChangeThreshold = opts.modeChangeThreshold || 20
-  // var prioritiseFeeds = opts.prioritiseFeeds // TODO: ???
 
   var store = Store({
     request: opts.request,
@@ -15,7 +14,6 @@ module.exports = function (opts) {
   store.doSetModeChangeThreshold(modeChangeThreshold)
   store.doSetMaxNumConnections(maxNumConnections)
   store.doStartScheduler(2000)
-  // store.doEnableDebug()
 
   return {
     request: function (feedId, isReplicationEnabled) {
