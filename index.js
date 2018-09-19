@@ -13,7 +13,7 @@ module.exports = function (opts) {
 
   store.doSetModeChangeThreshold(modeChangeThreshold)
   store.doSetMaxNumConnections(maxNumConnections)
-  store.doStartScheduler(2000)
+  store.doStartScheduler(4000)
 
   return {
     request: function (feedId, isReplicationEnabled) {
