@@ -11,9 +11,11 @@ module.exports = function (opts) {
   })
   // where getPeerAheadBy takes a feed Id and returns the maximum amount our copy of their feed is behind by.
 
+  console.log('inside rep manager index')
   store.doSetModeChangeThreshold(modeChangeThreshold)
   store.doSetMaxNumConnections(maxNumConnections)
   store.doStartScheduler(2000)
+  console.log('started scheduler')
 
   return {
     request: function (feedId, isReplicationEnabled) {
