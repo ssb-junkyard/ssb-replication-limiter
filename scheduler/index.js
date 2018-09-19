@@ -122,13 +122,10 @@ function doStartScheduler (interval) {
   return function ({dispatch, getPeerAheadBy, store, getState}) {
     interval = interval || 1000
 
-    console.log('started scheduler with interval: ', interval)
     var intervalID = setInterval(function () {
-      console.log('scheduler interval tick')
       var peers = store.selectPeers(getState()).keySeq()
 
       peers.forEach(function (peer) {
-        console.log('about to call getPeerAheadBy')
         var aheadBy = getPeerAheadBy(peer)
 
         dispatch({

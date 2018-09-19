@@ -19,6 +19,7 @@ module.exports = function (opts) {
 
   return {
     request: function (feedId, isReplicationEnabled) {
+      console.log('in rep manager requesting peer, isRep', feedId, isReplicationEnabled)
       if (isReplicationEnabled) { store.doAddPeer({feedId}) } else { store.doRemovePeer({feedId}) }
     },
     setModeChangeThreshold: function (threshold) {
