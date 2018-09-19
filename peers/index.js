@@ -28,7 +28,6 @@ module.exports = {
       case PEER_ADDED: {
         const { feedId } = action.payload
 
-        console.log('added peer: ', feedId)
         return state.update(feedId, function (peer) {
           if (!peer) {
             peer = PeerRecord({})
