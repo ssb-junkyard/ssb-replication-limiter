@@ -14,7 +14,8 @@ module.exports = function Store (opts) {
     getExtraArgs: function () {
       return {
         request: opts.request,
-        getPeerAheadBy: opts.getPeerAheadBy
+        getPeerAheadBy: opts.getPeerAheadBy,
+        isReplicationLimited: opts.isReplicationLimited
       }
     }
   }

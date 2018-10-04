@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "immutable": "^3.8.2",
+    "obv": "0.0.1",
     "redux-bundler": "^21.2.2"
   },
   "devDependencies": {

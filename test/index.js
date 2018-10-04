@@ -156,6 +156,7 @@ test('selectPeersToStartReplicating sorts by priority number', function (t) {
   t.equal(orderedKeys.size, maxNumConnections)
   t.end()
 })
+
 test('selectPeersToStopReplicating', function (t) {
   var id1 = createId(1)
   var id2 = createId(2)
@@ -170,15 +171,14 @@ test('selectPeersToStopReplicating', function (t) {
 
   var peer2 = PeerRecord({
     isReplicating: false,
-    aheadBy: threshold + 2
+    aheadBy: threshold + 1
   })
 
   var peer3 = PeerRecord({
     isReplicating: false,
-    aheadBy: threshold + 3
+    aheadBy: threshold + 1
   })
 
-  // if they're already replicating then ignore.
   var peer4 = PeerRecord({
     isReplicating: true,
     aheadBy: threshold - 1

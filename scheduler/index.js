@@ -39,7 +39,6 @@ module.exports = {
       case MODE_CHANGE_THRESHOLD_SET:
         return state.set('modeChangeThreshold', payload)
       case LIMITED_MODE_CHANGED:
-        console.error('Replication mode changed: ', payload)
         return state.set('mode', payload)
       case SCHEDULER_DID_TICK:
         return state
@@ -103,7 +102,7 @@ function doSetMaxNumConnections (max) {
 }
 
 function doSetLimitedMode (enableLimitedMode) {
-  return function ({dispatch, request, getState, store}) {
+  return function ({dispatch, request, getState, store, isReplicationLimited}) {
     // TODO: this is a bit yuck. fix later
     dispatch({type: LIMITED_MODE_CHANGED, payload: enableLimitedMode ? mode.SETTING_LIMITED : mode.SETTING_UNLIMITED})
     // On entering limited mode we need to set all the peers to not replicating
@@ -113,7 +112,8 @@ function doSetLimitedMode (enableLimitedMode) {
       args: [{feedIds: peerIds}]
     })
 
-    // TODO: this is a bit yuck. fix later
+    if (isReplicationLimited && typeof isReplicationLimited.set === 'function') { isReplicationLimited.set(enableLimitedMode) }
+
     dispatch({type: LIMITED_MODE_CHANGED, payload: enableLimitedMode ? mode.LIMITED : mode.UNLIMITED})
   }
 }

@@ -10,8 +10,7 @@
   - [x] Set a threshold to trigger special mode that limits the number of feeds being replicated at once. 
   - [x] Set the max number of feeds to download at once when in special mode.
   - [ ] Expose a mode obs so you can know when it's in limited mode. 
-  - [ ] Prioritising order of who to replicate first.
-  - [ ] Don't pause feeds that are synced with us. That way we can still get their updates.
+  - [x] Prioritising order of who to replicate first.
 
 ## API
 
@@ -36,9 +35,9 @@ Takes an `opts` object of shape:
 
 Replication manager has three methods:
 
-###  replicationManager.request(feedId, isReplicationEnabled)
+###  replicationManager.request(feedId, isReplicationEnabled, [priority])
 
-Same as ssb-ebt's request method.
+Same as ssb-ebt's request method. `priority` is optional and defaults to 0. The higer the number, the sooner it will be replicated.
 
 ### replicationManager.setModeChangeThreshold(threshold)
 
