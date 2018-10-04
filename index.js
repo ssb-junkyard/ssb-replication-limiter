@@ -16,8 +16,8 @@ module.exports = function (opts) {
   store.doStartScheduler(4000)
 
   return {
-    request: function (feedId, isReplicationEnabled) {
-      if (isReplicationEnabled) { store.doAddPeer({feedId}) } else { store.doRemovePeer({feedId}) }
+    request: function (feedId, isReplicationEnabled, priority) {
+      if (isReplicationEnabled) { store.doAddPeer({feedId, priority}) } else { store.doRemovePeer({feedId}) }
     },
     setModeChangeThreshold: function (threshold) {
       store.doSetModeChangeThreshold(threshold)

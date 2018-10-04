@@ -4,6 +4,7 @@ var {createSelector} = require('redux-bundler')
 
 var PeerRecord = Record({
   isReplicating: false,
+  priority: 0,
   aheadBy: 0 // positive means we are behind and can download. Negative means we are ahead and could allow them to request it if they want.
 })
 
@@ -26,11 +27,11 @@ module.exports = {
   _reducer: function (state = initialState, action) {
     switch (action.type) {
       case PEER_ADDED: {
-        const { feedId } = action.payload
+        const { feedId, priority } = action.payload
 
         return state.update(feedId, function (peer) {
           if (!peer) {
-            peer = PeerRecord({})
+            peer = PeerRecord({priority})
           }
           return peer
         })
@@ -101,6 +102,10 @@ module.exports = {
       .filter(function (peer) {
         return !peer.get('isReplicating')
       })
+      .sortBy(function (peer) {
+        return peer.get('priority')
+      })
+      .reverse()
       .take(max - numberOfReplicatingPeers)
   }),
   selectPeersToStopReplicating: createSelector('selectReplicatingPeers', 'selectThreshold', function (peers, threshold) {
@@ -164,11 +169,12 @@ function doStopPeersReplicating ({feedIds}) {
   }
 }
 
-function doAddPeer ({feedId}) {
+function doAddPeer ({feedId, priority}) {
   return {
     type: PEER_ADDED,
     payload: {
-      feedId
+      feedId,
+      priority
     }
   }
 }

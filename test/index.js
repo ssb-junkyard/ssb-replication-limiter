@@ -33,11 +33,13 @@ test('Set Max Peers', function (t) {
 })
 
 test('Adds a peer', function (t) {
+  var expectedPriority = 10
   var app = Store({request, getPeerAheadBy})
   var peerId = 'DTNmX+4SjsgZ7xyDh5xxmNtFqa6pWi5Qtw7cE8aR9TQ='
-  app.doAddPeer({feedId: peerId})
+  app.doAddPeer({feedId: peerId, priority: expectedPriority})
   var peer = app.selectPeers(app.getState()).get(peerId)
   t.ok(peer, 'peer was added')
+  t.equal(peer.priority, expectedPriority)
 
   t.end()
 })
@@ -82,12 +84,12 @@ test('selectPeersToStartReplicating', function (t) {
 
   var peer2 = PeerRecord({
     isReplicating: false,
-    aheadBy: threshold + 2
+    aheadBy: threshold + 1
   })
 
   var peer3 = PeerRecord({
     isReplicating: false,
-    aheadBy: threshold + 3
+    aheadBy: threshold + 1
   })
 
   // if they're already replicating then ignore.
@@ -98,18 +100,62 @@ test('selectPeersToStartReplicating', function (t) {
 
   var state = Map({
     [id1]: peer1,
+    [id2]: peer2,
+    [id3]: peer3,
     [id4]: peer4
   })
 
+  var maxNumConnections = 3
   var app = Store({request, getPeerAheadBy, peers: {initialState: state}})
   app.doSetModeChangeThreshold(threshold)
-  app.doSetMaxNumConnections(2)
+  app.doSetMaxNumConnections(maxNumConnections)
   var orderedKeys = app.selectPeersToStartReplicating(app.getState()).keySeq()
-  t.equal(orderedKeys.get(0), id1)
-  t.equal(orderedKeys.size, 1)
+  t.equal(orderedKeys.get(0), id3) // these are swapped because we sort and then reverse
+  t.equal(orderedKeys.get(1), id2)
+  t.equal(orderedKeys.size, maxNumConnections - 1) // peer4 is already replicating
   t.end()
 })
 
+test('selectPeersToStartReplicating sorts by priority number', function (t) {
+  var id1 = createId(1)
+  var id2 = createId(2)
+  var id3 = createId(3)
+
+  var threshold = 5
+  var peer1 = PeerRecord({
+    isReplicating: false,
+    aheadBy: threshold + 1
+  })
+
+  var peer2 = PeerRecord({
+    isReplicating: false,
+    priority: 9,
+    aheadBy: threshold + 1
+  })
+
+  var peer3 = PeerRecord({
+    isReplicating: false,
+    priority: 10,
+    aheadBy: threshold + 1
+  })
+
+  var state = Map({
+    [id1]: peer1,
+    [id2]: peer2,
+    [id3]: peer3
+  })
+
+  var maxNumConnections = 3
+  var app = Store({request, getPeerAheadBy, peers: {initialState: state}})
+  app.doSetModeChangeThreshold(threshold)
+  app.doSetMaxNumConnections(maxNumConnections)
+  var orderedKeys = app.selectPeersToStartReplicating(app.getState()).keySeq()
+  t.equal(orderedKeys.get(0), id3)
+  t.equal(orderedKeys.get(1), id2)
+  t.equal(orderedKeys.get(2), id1)
+  t.equal(orderedKeys.size, maxNumConnections)
+  t.end()
+})
 test('selectPeersToStopReplicating', function (t) {
   var id1 = createId(1)
   var id2 = createId(2)
