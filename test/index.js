@@ -129,13 +129,13 @@ test('selectPeersToStartReplicating sorts by priority number', function (t) {
 
   var peer2 = PeerRecord({
     isReplicating: false,
-    priority: 9,
+    priority: 10,
     aheadBy: threshold + 1
   })
 
   var peer3 = PeerRecord({
     isReplicating: false,
-    priority: 10,
+    priority: 9,
     aheadBy: threshold + 1
   })
 
@@ -150,8 +150,8 @@ test('selectPeersToStartReplicating sorts by priority number', function (t) {
   app.doSetModeChangeThreshold(threshold)
   app.doSetMaxNumConnections(maxNumConnections)
   var orderedKeys = app.selectPeersToStartReplicating(app.getState()).keySeq()
-  t.equal(orderedKeys.get(0), id3)
-  t.equal(orderedKeys.get(1), id2)
+  t.equal(orderedKeys.get(0), id2)
+  t.equal(orderedKeys.get(1), id3)
   t.equal(orderedKeys.get(2), id1)
   t.equal(orderedKeys.size, maxNumConnections)
   t.end()
