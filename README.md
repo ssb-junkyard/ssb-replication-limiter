@@ -9,7 +9,7 @@
   - [x] Track how far behind all feeds are. If they are a long way behind then you have to do a lot of downloading so trigger special mode.
   - [x] Set a threshold to trigger special mode that limits the number of feeds being replicated at once. 
   - [x] Set the max number of feeds to download at once when in special mode.
-  - [ ] Expose a mode obs so you can know when it's in limited mode. 
+  - [x] Expose a mode obs so you can know when it's in limited mode. 
   - [x] Prioritising order of who to replicate first.
 
 ## API
