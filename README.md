@@ -1,16 +1,18 @@
-# [WIP] ssb-replication-limiter
+# ssb-replication-limiter
 
-> Configure and prioritise ebt replication for ssb
+> Limit and prioritise ebt replication for ssb.
 
-[ssb-ebt](https://github.com/ssbc/ssb-ebt) only exposes an api to stop or start replication of a feed. This module enhances it so you can control the maximum number of simultaneous downloads and prioritise who gets replicated first.
+[ssb-ebt](https://github.com/ssbc/ssb-ebt) only exposes an api to stop or start replication of a feed. This module enhances it so you can control the maximum number of simultaneous downloads and prioritise who gets replicated first. 
 
-## Now: 
+The limiter has two modes: unlimited and limited. In unlimited mode the module doesn't really do anything, it's just ordinary ebt replication.
 
-  - [x] Track how far behind all feeds are. If they are a long way behind then you have to do a lot of downloading so trigger special mode.
-  - [x] Set a threshold to trigger special mode that limits the number of feeds being replicated at once. 
-  - [x] Set the max number of feeds to download at once when in special mode.
-  - [x] Expose a mode obs so you can know when it's in limited mode. 
-  - [x] Prioritising order of who to replicate first.
+In limited mode, only a certain number of feeds are allowed to be replicating at once.
+
+This module tracks how far behind all feeds are. If your local copies are a long way behind then you have to do a lot of downloading to do. If a feed is more than threshold (`modeChangeThreshold`) behind, the module changes mode to `limited` mode.
+
+In limited mode, only a set number (`maxNumConnections`) of feeds will be replicated simultaneously.
+
+It's also possible to prioritise which feeds are replicated first in limited mode. See the third argument of the `request` function.
 
 ## API
 
@@ -18,8 +20,8 @@
 ### Init
 
 ```js
-var ReplicationManager = require('ssb-replication-limiter')
-var replicationManager = ReplicationManager(opts)
+var ReplicationLimiter = require('ssb-replication-limiter')
+var replicationLimiter = ReplicationLimiter(opts)
 ```
 Takes an `opts` object of shape: 
 
@@ -33,19 +35,27 @@ Takes an `opts` object of shape:
 }
 ```
 
-Replication limiter has three methods:
+`replicationLimiter` has four methods:
 
-###  replicationManager.request(feedId, isReplicationEnabled, [priority])
+###  replicationLimiter.request(feedId, isReplicationEnabled, [priority])
 
 Same as ssb-ebt's request method. `priority` is optional and defaults to 0. The higer the number, the sooner it will be replicated.
 
-### replicationManager.setModeChangeThreshold(threshold)
+### replicationLimiter.setModeChangeThreshold(threshold)
 
 Sets a new mode change threshold.
 
-### replicationManager.setMaxNumConnections(max)
+### replicationLimiter.setMaxNumConnections(max)
 
 Sets a new maximum number of connections allowed when in limited mode.
+
+### replicationLimiter.isReplicationEnabled(<listener-function>)
+
+`isReplicationEnabled` is an [observable](https://github.com/dominictarr/obv)
+
+Sets `listener-function` as a new observer of `isReplicationEnabled` 
+
+`listener-function` will be called with a boolean when the mode changes.
  
 ## Install
 
@@ -57,37 +67,12 @@ $ npm install ssb-replication-limiter
 
 ## Acknowledgments
 
-ssb-replication-limiter was inspired by..
+This project is funded by a grant from [staltz](https://github.com/staltz) for the [manyverse](https://github.com/staltz/manyverse) project.
 
 ## See Also
 
-- [`noffle/common-readme`](https://github.com/noffle/common-readme)
+- [`ssb-ebt`](https://github.com/ssbc/ssb-ebt)
 
 ## License
 
-ISC
-
-
-## TODOs
-
-- [ ] expose a method to check if replication is doing a big sync
-  - [ ] use this in the connection limiter to stop disconnecting.
-
-- [x] when there are no peers left above the threshold, they can all be replicating
-
-- [x] as soons as one peer goes over the threshold, all replicating peers should be disabled
-
-- [x] selectPeersFarBehind (uses max downloads)
-
-- [x] selectPeersToDisconnect (will be connected and under the threshold)
-
-- [x] Query peerStatus for all the peers we know about.
-
-- [x] then map from ebt peerStatus structure to {[feedId]: behindBy}
-
-- [x] set a really slow scheduler interval for this. 5-10s because otherwise at initial sync we're going to be jumping around a lot between all the feeds.
-
-- [x] Or make a selector that such that, if there is a peer downloading && over the threshold, just don't change anything.
-
-- [x] trigger the side effect which is the call to ebt.request(..., true)
-
+MIT
