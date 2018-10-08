@@ -30,6 +30,7 @@ module.exports = function (opts) {
     setMaxNumConnections: function (max) {
       store.doSetMaxNumConnections(max)
     },
-    isReplicationLimited: isReplicationLimited
+    isReplicationLimited: isReplicationLimited,
+    stop: store.doStopScheduler
   }
 }
