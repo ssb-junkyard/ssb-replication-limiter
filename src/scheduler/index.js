@@ -4,7 +4,6 @@ var {fromJS} = require('immutable')
 const MAX_NUM_CONNECTIONS_SET = 'MAX_NUM_CONNECTIONS_SET'
 const SCHEDULER_DID_START = 'SCHEDULER_DID_START'
 const SCHEDULER_DID_STOP = 'SCHEDULER_DID_STOP'
-const SCHEDULER_DID_TICK = 'SCHEDULER_DID_TICK'
 const MODE_CHANGE_THRESHOLD_SET = 'MODE_CHANGE_THRESHOLD_SET'
 const LIMITED_MODE_CHANGED = 'LIMITED_MODE_CHANGED'
 
@@ -40,8 +39,6 @@ module.exports = {
         return state.set('modeChangeThreshold', payload)
       case LIMITED_MODE_CHANGED:
         return state.set('mode', payload)
-      case SCHEDULER_DID_TICK:
-        return state
       default:
         return state
     }
@@ -90,7 +87,6 @@ module.exports = {
   doSetMaxNumConnections,
   doStartScheduler,
   doStopScheduler,
-  doSchedulerTick,
   doSetModeChangeThreshold
 }
 
@@ -133,8 +129,6 @@ function doStartScheduler (interval) {
           args: [{aheadBy, feedId: peer}]
         })
       })
-
-      // dispatch(doSchedulerTick(interval))
     }, interval)
     dispatch({type: SCHEDULER_DID_START, payload: intervalID})
   }
@@ -146,13 +140,6 @@ function doStopScheduler () {
 
     clearInterval(schedulerTimerId)
     dispatch({type: SCHEDULER_DID_STOP})
-  }
-}
-
-function doSchedulerTick (ms) {
-  return {
-    type: SCHEDULER_DID_TICK,
-    payload: ms
   }
 }
 

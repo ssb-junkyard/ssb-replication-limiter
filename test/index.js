@@ -1,6 +1,6 @@
 var test = require('tape')
-var Store = require('../lib/store')
-var { PeerRecord } = require('../lib/peers/')
+var Store = require('../src/store')
+var { PeerRecord } = require('../src/peers/')
 var {Map} = require('immutable')
 
 function request () {
