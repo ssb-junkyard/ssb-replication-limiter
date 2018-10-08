@@ -1,4 +1,4 @@
-# [WIP] ssb-replication-manager
+# [WIP] ssb-replication-limiter
 
 > Configure and prioritise ebt replication for ssb
 
@@ -18,7 +18,7 @@
 ### Init
 
 ```js
-var ReplicationManager = require('ssb-replication-manager')
+var ReplicationManager = require('ssb-replication-limiter')
 var replicationManager = ReplicationManager(opts)
 ```
 Takes an `opts` object of shape: 
@@ -33,7 +33,7 @@ Takes an `opts` object of shape:
 }
 ```
 
-Replication manager has three methods:
+Replication limiter has three methods:
 
 ###  replicationManager.request(feedId, isReplicationEnabled, [priority])
 
@@ -52,12 +52,12 @@ Sets a new maximum number of connections allowed when in limited mode.
 With [npm](https://npmjs.org/) installed, run
 
 ```
-$ npm install ssb-replication-manager
+$ npm install ssb-replication-limiter
 ```
 
 ## Acknowledgments
 
-ssb-replication-manager was inspired by..
+ssb-replication-limiter was inspired by..
 
 ## See Also
 
@@ -71,7 +71,7 @@ ISC
 ## TODOs
 
 - [ ] expose a method to check if replication is doing a big sync
-  - [ ] use this in the connection manager to stop disconnecting.
+  - [ ] use this in the connection limiter to stop disconnecting.
 
 - [x] when there are no peers left above the threshold, they can all be replicating
 
