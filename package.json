@@ -9,10 +9,10 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "npm run build && tape test/*.js && npm run deps",
+    "test": "tape test/*.js && npm run deps",
     "build": "mkdir lib; babel src -d lib",
     "deps": "dependency-check --unused --no-dev .",
-    "prepublish": "npm run test && npm run deps"
+    "prepublishOnly": "npm run build && npm run test && npm run deps"
   },
   "keywords": [],
   "author": "pietgeursen",
