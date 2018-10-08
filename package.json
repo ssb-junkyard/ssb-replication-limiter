@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "tape test/*.js",
+    "test": "tape test/*.js && npm run deps",
     "build": "babel src -d lib",
-    "prepublish": "npm run build"
+    "deps": "dependency-check --unused --no-dev .",
+    "prepublish": "npm run test && npm run build && npm run deps"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "immutable": "^3.8.2",
     "obv": "0.0.1",
@@ -20,6 +21,7 @@
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
+    "dependency-check": "^3.2.1",
     "tape": "^4.9.1"
   }
 }
