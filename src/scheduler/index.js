@@ -130,6 +130,7 @@ function doStartScheduler (interval) {
         })
       })
     }, interval)
+    intervalID.unref()
     dispatch({type: SCHEDULER_DID_START, payload: intervalID})
   }
 }
