@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ssbc/ssb-replication-limiter.svg?branch=master)](https://travis-ci.org/ssbc/ssb-replication-limiter)
+
 # ssb-replication-limiter
 
 > Limit and prioritise ebt replication for ssb.
