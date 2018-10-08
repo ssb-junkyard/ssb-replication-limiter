@@ -39,7 +39,7 @@ Takes an `opts` object of shape:
 
 ###  replicationLimiter.request(feedId, isReplicationEnabled, [priority])
 
-Same as ssb-ebt's request method. `priority` is optional and defaults to 0. The higer the number, the sooner it will be replicated.
+Same as ssb-ebt's request method. `priority` is optional and defaults to 0. The higher the number, the sooner it will be replicated.
 
 ### replicationLimiter.setModeChangeThreshold(threshold)
 
