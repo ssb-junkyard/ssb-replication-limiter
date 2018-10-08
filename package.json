@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "test": "tape test/*.js && npm run deps",
-    "build": "babel src -d lib",
+    "build": "mkdir lib; babel src -d lib",
     "deps": "dependency-check --unused --no-dev .",
     "prepublish": "npm run test && npm run build && npm run deps"
   },
